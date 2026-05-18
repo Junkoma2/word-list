@@ -258,6 +258,12 @@ h1 {
   border-bottom: 0;
 }
 
+.word-item.is-editing {
+  background: #f0f4ff;
+  outline: 2px solid #94a3b8;
+  outline-offset: -2px;
+}
+
 .word {
   font-weight: 600;
 }
