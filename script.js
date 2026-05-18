@@ -224,7 +224,7 @@ function render() {
 
   visibleItems.forEach(item => {
     const row = document.createElement('li')
-    row.className = 'word-item'
+    row.className = 'word-item' + (item.id === editingId ? ' is-editing' : '')
 
     const word = document.createElement('span')
     word.className = 'word'
@@ -263,6 +263,7 @@ function render() {
       editingId = item.id
       submitButton.textContent = '更新'
       cancelEditButton.hidden = false
+      render()
       wordInput.focus()
     })
 
