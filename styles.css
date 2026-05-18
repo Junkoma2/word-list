@@ -434,6 +434,13 @@ h1 {
   .checks {
     grid-column: 2;
     grid-row: 1;
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  .checks::before {
+    content: "登録: ";
+    color: #94a3b8;
   }
 
   .row-actions {

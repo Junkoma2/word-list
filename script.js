@@ -246,6 +246,7 @@ function render() {
     const checks = document.createElement('span')
     checks.className = 'checks'
     checks.textContent = item.checks ? `✔ ${item.checks}` : '—'
+    checks.setAttribute('aria-label', item.checks ? `${item.checks}回登録` : '登録なし')
 
     const actions = document.createElement('span')
     actions.className = 'row-actions'
