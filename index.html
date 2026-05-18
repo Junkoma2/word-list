@@ -10,6 +10,12 @@
     <main class="app-shell">
       <header class="app-header">
         <h1>word list</h1>
+        <div class="app-actions" aria-label="データ操作">
+          <button id="check-update" class="quiet-action" type="button">更新</button>
+          <button id="export-data" class="quiet-action" type="button">エクスポート</button>
+          <button id="import-data" class="quiet-action" type="button">インポート</button>
+          <input id="import-file" class="sr-only" type="file" accept="application/json" />
+        </div>
       </header>
 
       <form class="word-form" id="word-form">
@@ -19,8 +25,13 @@
         <label class="sr-only" for="note-input">メモ</label>
         <input id="note-input" type="text" maxlength="240" placeholder="意味を調べたらメモ" autocomplete="off" />
 
-        <label class="sr-only" for="tag-input">タグ</label>
-        <input id="tag-input" type="text" maxlength="120" placeholder="タグ（カンマ区切り）" autocomplete="off" />
+        <div class="tag-composer" id="tag-composer">
+          <label class="sr-only" for="tag-input">タグ</label>
+          <div class="tag-chip-list" id="tag-chip-list"></div>
+          <input id="tag-input" type="text" maxlength="40" placeholder="タグを追加" autocomplete="off" list="tag-suggestions" />
+          <datalist id="tag-suggestions"></datalist>
+          <button class="tag-add-button" id="tag-add-button" type="button" aria-label="タグを追加">＋</button>
+        </div>
 
         <button type="submit">追加</button>
       </form>
@@ -64,6 +75,7 @@
       </form>
     </dialog>
 
+    <p id="status-message" class="status-message" role="status" aria-live="polite"></p>
     <script src="./script.js"></script>
   </body>
 </html>

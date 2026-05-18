@@ -4,6 +4,9 @@ const form = document.querySelector('#word-form')
 const wordInput = document.querySelector('#word-input')
 const noteInput = document.querySelector('#note-input')
 const tagInput = document.querySelector('#tag-input')
+const tagChipList = document.querySelector('#tag-chip-list')
+const tagAddButton = document.querySelector('#tag-add-button')
+const tagSuggestions = document.querySelector('#tag-suggestions')
 const tagFilter = document.querySelector('#tag-filter')
 const list = document.querySelector('#word-list')
 const emptyState = document.querySelector('#empty-state')
@@ -14,11 +17,17 @@ const testWord = document.querySelector('#test-word')
 const testNote = document.querySelector('#test-note')
 const revealNote = document.querySelector('#reveal-note')
 const nextWord = document.querySelector('#next-word')
+const checkUpdateButton = document.querySelector('#check-update')
+const exportButton = document.querySelector('#export-data')
+const importButton = document.querySelector('#import-data')
+const importFile = document.querySelector('#import-file')
+const statusMessage = document.querySelector('#status-message')
 
 let items = loadItems()
 let currentTestItems = []
 let currentTestIndex = 0
 let editingId = null
+let pendingTags = []
 
 function loadItems() {
   try {
@@ -32,17 +41,143 @@ function saveItems() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
 }
 
+function showStatus(message) {
+  statusMessage.textContent = message
+  window.clearTimeout(showStatus.timer)
+  showStatus.timer = window.setTimeout(() => {
+    statusMessage.textContent = ''
+  }, 2600)
+}
+
+function exportItems() {
+  const payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    items,
+  }
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `word-list-${new Date().toISOString().slice(0, 10)}.json`
+  link.click()
+  URL.revokeObjectURL(url)
+  showStatus('エクスポートしました')
+}
+
+function isValidItem(value) {
+  return (
+    value &&
+    typeof value.id === 'string' &&
+    typeof value.word === 'string' &&
+    (value.note == null || typeof value.note === 'string') &&
+    (value.tags == null || (Array.isArray(value.tags) && value.tags.every(tag => typeof tag === 'string'))) &&
+    (value.checks == null || typeof value.checks === 'number')
+  )
+}
+
+function importItems(file) {
+  if (!file) return
+  if (file.size > 2 * 1024 * 1024) {
+    showStatus('ファイルが大きすぎます')
+    return
+  }
+
+  const reader = new FileReader()
+  reader.onload = event => {
+    try {
+      const payload = JSON.parse(event.target.result)
+      if (!Array.isArray(payload.items) || !payload.items.every(isValidItem)) {
+        throw new Error('invalid')
+      }
+      if (!window.confirm('現在の単語を置き換えてインポートしますか？')) return
+      items = payload.items.map(item => ({
+        ...item,
+        note: item.note ?? '',
+        tags: item.tags ?? [],
+        checks: item.checks ?? 1,
+      }))
+      pendingTags = []
+      saveItems()
+      renderTagComposer()
+      render()
+      showStatus('インポートしました')
+    } catch {
+      showStatus('JSON を読み込めませんでした')
+    } finally {
+      importFile.value = ''
+    }
+  }
+  reader.readAsText(file)
+}
+
+async function checkForUpdate() {
+  if (!('serviceWorker' in navigator)) {
+    window.location.reload()
+    return
+  }
+
+  const registration = await navigator.serviceWorker.getRegistration()
+  if (!registration) {
+    window.location.reload()
+    return
+  }
+
+  await registration.update()
+  if (registration.waiting) {
+    registration.waiting.postMessage({ type: 'SKIP_WAITING' })
+    showStatus('更新を適用しています')
+    return
+  }
+  showStatus('最新です')
+}
+
 function normalizeWord(value) {
   return value.trim().toLocaleLowerCase()
 }
 
-function parseTags(value) {
-  return [...new Set(
-    value
-      .split(',')
-      .map(tag => tag.trim())
-      .filter(Boolean),
-  )]
+function normalizeTag(value) {
+  return value.trim()
+}
+
+function renderTagComposer() {
+  tagChipList.innerHTML = ''
+
+  pendingTags.forEach(tagValue => {
+    const chip = document.createElement('span')
+    chip.className = 'tag-chip'
+
+    const label = document.createElement('span')
+    label.textContent = tagValue
+
+    const remove = document.createElement('button')
+    remove.className = 'tag-remove-button'
+    remove.type = 'button'
+    remove.ariaLabel = `${tagValue} を削除`
+    remove.textContent = '×'
+    remove.addEventListener('click', () => {
+      pendingTags = pendingTags.filter(tag => tag !== tagValue)
+      renderTagComposer()
+      tagInput.focus()
+    })
+
+    chip.append(label, remove)
+    tagChipList.append(chip)
+  })
+
+  refreshTagSuggestions()
+}
+
+function addPendingTag() {
+  const tag = normalizeTag(tagInput.value)
+  if (!tag || pendingTags.includes(tag)) {
+    tagInput.value = ''
+    return
+  }
+
+  pendingTags = [...pendingTags, tag]
+  tagInput.value = ''
+  renderTagComposer()
 }
 
 function getAllTags() {
@@ -53,6 +188,18 @@ function getVisibleItems() {
   const selectedTag = tagFilter.value
   if (selectedTag === 'all') return items
   return items.filter(item => item.tags?.includes(selectedTag))
+}
+
+function refreshTagSuggestions() {
+  tagSuggestions.innerHTML = ''
+
+  getAllTags()
+    .filter(tag => !pendingTags.includes(tag))
+    .forEach(tag => {
+      const option = document.createElement('option')
+      option.value = tag
+      tagSuggestions.append(option)
+    })
 }
 
 function refreshTagFilter() {
@@ -110,7 +257,8 @@ function render() {
     edit.addEventListener('click', () => {
       wordInput.value = item.word
       noteInput.value = item.note ?? ''
-      tagInput.value = (item.tags ?? []).join(', ')
+      pendingTags = [...(item.tags ?? [])]
+      renderTagComposer()
       editingId = item.id
       wordInput.focus()
     })
@@ -187,7 +335,8 @@ form.addEventListener('submit', event => {
   event.preventDefault()
   const word = wordInput.value.trim()
   const note = noteInput.value.trim()
-  const tags = parseTags(tagInput.value)
+  addPendingTag()
+  const tags = [...pendingTags]
   if (!word) return
 
   if (editingId) {
@@ -199,6 +348,8 @@ form.addEventListener('submit', event => {
   wordInput.value = ''
   noteInput.value = ''
   tagInput.value = ''
+  pendingTags = []
+  renderTagComposer()
   saveItems()
   render()
   wordInput.focus()
@@ -206,6 +357,22 @@ form.addEventListener('submit', event => {
 
 tagFilter.addEventListener('change', render)
 startTestButton.addEventListener('click', openTest)
+tagAddButton.addEventListener('click', () => {
+  addPendingTag()
+  tagInput.focus()
+})
+
+tagInput.addEventListener('keydown', event => {
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    addPendingTag()
+  }
+
+  if (event.key === 'Backspace' && !tagInput.value && pendingTags.length > 0) {
+    pendingTags = pendingTags.slice(0, -1)
+    renderTagComposer()
+  }
+})
 
 revealNote.addEventListener('click', () => {
   testNote.hidden = false
@@ -216,4 +383,15 @@ nextWord.addEventListener('click', () => {
   renderTestCard()
 })
 
+exportButton.addEventListener('click', exportItems)
+importButton.addEventListener('click', () => importFile.click())
+importFile.addEventListener('change', event => importItems(event.target.files?.[0]))
+checkUpdateButton.addEventListener('click', checkForUpdate)
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+  navigator.serviceWorker.addEventListener('controllerchange', () => window.location.reload())
+}
+
+renderTagComposer()
 render()
