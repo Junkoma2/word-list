@@ -343,6 +343,8 @@ function openTest() {
 }
 
 function renderTestCard() {
+  const isLast = currentTestIndex === currentTestItems.length - 1
+  nextWord.textContent = isLast ? 'もう一度' : '次へ'
   const item = currentTestItems[currentTestIndex]
   testProgress.textContent = `${currentTestIndex + 1} / ${currentTestItems.length}`
   testWord.textContent = item.word
