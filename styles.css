@@ -168,7 +168,6 @@ h1 {
 }
 
 .word-form button,
-.toolbar button,
 .test-actions button {
   border: 0;
   border-radius: 8px;
@@ -181,6 +180,16 @@ h1 {
 .word-form .tag-add-button {
   background: #eef2f7;
   color: #172033;
+}
+
+#start-test {
+  border: 1px solid #d6dae1;
+  border-radius: 8px;
+  background: #fff;
+  color: #334155;
+  padding: 0 16px;
+  cursor: pointer;
+  min-height: 44px;
 }
 
 .toolbar {
