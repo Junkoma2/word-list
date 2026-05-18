@@ -1,0 +1,19 @@
+{
+  "name": "単語リスト",
+  "short_name": "単語",
+  "description": "分からない単語をすぐ保存するアプリ",
+  "theme_color": "#10B981",
+  "background_color": "#f5f6f8",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/word-list/",
+  "start_url": "/word-list/",
+  "icons": [
+    {
+      "src": "/word-list/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
