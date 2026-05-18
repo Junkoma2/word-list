@@ -272,11 +272,11 @@ function render() {
     remove.type = 'button'
     remove.textContent = '削除'
     remove.addEventListener('click', () => {
+      if (!window.confirm(`「${item.word}」を削除しますか？`)) return
       items = items.filter(entry => entry.id !== item.id)
       saveItems()
       render()
     })
-
     actions.append(edit, remove)
     row.append(word, note, tags, checks, actions)
     list.append(row)
