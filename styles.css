@@ -55,7 +55,7 @@ h1 {
 }
 
 .quiet-action {
-  min-height: 36px;
+  min-height: 44px;
   border: 1px solid #d6dae1;
   border-radius: 8px;
   background: #fff;
@@ -275,6 +275,7 @@ h1 {
 
 .subtle-button,
 .delete-button {
+  min-height: 44px;
   border: 0;
   background: transparent;
   color: #64748b;
