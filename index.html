@@ -19,21 +19,27 @@
       </header>
 
       <form class="word-form" id="word-form">
-        <label class="sr-only" for="word-input">単語</label>
-        <input id="word-input" type="text" maxlength="80" placeholder="分からない単語" autocomplete="off" />
-
-        <label class="sr-only" for="note-input">メモ</label>
-        <input id="note-input" type="text" maxlength="240" placeholder="意味を調べたらメモ" autocomplete="off" />
-
-        <div class="tag-composer" id="tag-composer">
-          <label class="sr-only" for="tag-input">タグ</label>
-          <div class="tag-chip-list" id="tag-chip-list"></div>
-          <input id="tag-input" type="text" maxlength="40" placeholder="タグを追加" autocomplete="off" list="tag-suggestions" />
-          <datalist id="tag-suggestions"></datalist>
-          <button class="tag-add-button" id="tag-add-button" type="button" aria-label="タグを追加">＋</button>
+        <div class="form-field">
+          <label for="word-input">単語</label>
+          <input id="word-input" type="text" maxlength="80" placeholder="分からなかった単語" autocomplete="off" />
         </div>
 
-        <button type="submit">追加</button>
+        <div class="form-field">
+          <label for="note-input">メモ</label>
+          <input id="note-input" type="text" maxlength="240" placeholder="意味・使い方など" autocomplete="off" />
+        </div>
+
+        <div class="form-field">
+          <label for="tag-input">タグ</label>
+          <div class="tag-composer" id="tag-composer">
+            <div class="tag-chip-list" id="tag-chip-list"></div>
+            <input id="tag-input" type="text" maxlength="40" placeholder="タグ名を入力" autocomplete="off" list="tag-suggestions" />
+            <datalist id="tag-suggestions"></datalist>
+            <button class="tag-add-button" id="tag-add-button" type="button" aria-label="タグを追加">追加</button>
+          </div>
+        </div>
+
+        <button type="submit" id="submit-button">追加</button>
       </form>
 
       <section class="toolbar" aria-label="表示設定">

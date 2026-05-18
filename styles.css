@@ -68,7 +68,18 @@ h1 {
   display: grid;
   grid-template-columns: minmax(150px, 1fr) minmax(220px, 1.4fr) minmax(180px, 1fr) auto;
   gap: 10px;
+  align-items: end;
   margin-bottom: 14px;
+}
+
+.form-field {
+  display: grid;
+  gap: 6px;
+}
+
+.form-field label {
+  font-size: 13px;
+  color: #64748b;
 }
 
 .word-form input,
@@ -147,12 +158,13 @@ h1 {
 
 .tag-add-button {
   flex: 0 0 auto;
-  width: 34px;
+  min-width: 48px;
   min-height: 34px;
   border-radius: 7px;
   background: #eef2f7;
   color: #172033;
-  padding: 0;
+  padding: 0 8px;
+  font-size: 13px;
 }
 
 .word-form button,
@@ -381,6 +393,10 @@ h1 {
 
   .word-form {
     grid-template-columns: 1fr;
+  }
+
+  .word-form > button[type='submit'] {
+    min-height: 44px;
   }
 
   .toolbar {

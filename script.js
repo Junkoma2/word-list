@@ -260,6 +260,7 @@ function render() {
       pendingTags = [...(item.tags ?? [])]
       renderTagComposer()
       editingId = item.id
+      submitButton.textContent = '更新'
       wordInput.focus()
     })
 
@@ -309,6 +310,21 @@ function updateWord(id, word, note, tags) {
   const item = items.find(entry => entry.id === id)
   if (!item) return
 
+  const normalizedWord = normalizeWord(word)
+  const duplicate = items.find(
+    entry => entry.id !== id && normalizeWord(entry.word) === normalizedWord
+  )
+
+  if (duplicate) {
+    // 既存の単語へマージ：checks・メモ・タグを統合して編集中の項目を削除
+    duplicate.checks = (duplicate.checks ?? 1) + (item.checks ?? 1)
+    if (note) duplicate.note = note
+    duplicate.tags = [...new Set([...(duplicate.tags ?? []), ...tags])]
+    duplicate.updatedAt = new Date().toISOString()
+    items = items.filter(entry => entry.id !== id)
+    return
+  }
+
   item.word = word
   item.note = note
   item.tags = tags
@@ -331,6 +347,8 @@ function renderTestCard() {
   testNote.hidden = true
 }
 
+const submitButton = document.querySelector('#submit-button')
+
 form.addEventListener('submit', event => {
   event.preventDefault()
   const word = wordInput.value.trim()
@@ -349,6 +367,7 @@ form.addEventListener('submit', event => {
   noteInput.value = ''
   tagInput.value = ''
   pendingTags = []
+  submitButton.textContent = '追加'
   renderTagComposer()
   saveItems()
   render()
