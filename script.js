@@ -262,6 +262,7 @@ function render() {
       renderTagComposer()
       editingId = item.id
       submitButton.textContent = '更新'
+      cancelEditButton.hidden = false
       wordInput.focus()
     })
 
@@ -349,6 +350,7 @@ function renderTestCard() {
 }
 
 const submitButton = document.querySelector('#submit-button')
+const cancelEditButton = document.querySelector('#cancel-edit-button')
 
 form.addEventListener('submit', event => {
   event.preventDefault()
@@ -369,11 +371,26 @@ form.addEventListener('submit', event => {
   tagInput.value = ''
   pendingTags = []
   submitButton.textContent = '追加'
+  cancelEditButton.hidden = true
   renderTagComposer()
   saveItems()
   render()
   wordInput.focus()
 })
+
+function resetForm() {
+  editingId = null
+  wordInput.value = ''
+  noteInput.value = ''
+  tagInput.value = ''
+  pendingTags = []
+  submitButton.textContent = '追加'
+  cancelEditButton.hidden = true
+  renderTagComposer()
+  wordInput.focus()
+}
+
+cancelEditButton.addEventListener('click', resetForm)
 
 tagFilter.addEventListener('change', render)
 startTestButton.addEventListener('click', openTest)

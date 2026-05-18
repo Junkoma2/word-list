@@ -72,6 +72,18 @@ h1 {
   margin-bottom: 14px;
 }
 
+.form-submit-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: end;
+}
+
+.word-form #cancel-edit-button {
+  background: #eef2f7;
+  color: #172033;
+}
+
 .form-field {
   display: grid;
   gap: 6px;
@@ -405,7 +417,7 @@ h1 {
     grid-template-columns: 1fr;
   }
 
-  .word-form > button[type='submit'] {
+  .form-submit-row button {
     min-height: 44px;
   }
 
