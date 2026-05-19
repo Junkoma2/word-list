@@ -38,7 +38,11 @@ function loadItems() {
 }
 
 function saveItems() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+  } catch {
+    showStatus('保存に失敗しました')
+  }
 }
 
 function showStatus(message) {
