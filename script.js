@@ -421,7 +421,7 @@ revealNote.addEventListener('click', () => {
 nextWord.addEventListener('click', () => {
   const isLast = currentTestIndex === currentTestItems.length - 1
   currentTestIndex = (currentTestIndex + 1) % currentTestItems.length
-  if (isLast) showStatus('テスト完了！')
+  if (isLast) showStatus('テスト完了')
   renderTestCard()
 })
 
