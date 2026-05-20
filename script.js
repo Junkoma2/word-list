@@ -441,6 +441,22 @@ importButton.addEventListener('click', () => importFile.click())
 importFile.addEventListener('change', event => importItems(event.target.files?.[0]))
 checkUpdateButton.addEventListener('click', checkForUpdate)
 
+const menuToggle = document.querySelector('#menu-toggle')
+const menuPopup = document.querySelector('#menu-popup')
+
+menuToggle.addEventListener('click', () => {
+  const isOpen = menuPopup.hidden === false
+  menuPopup.hidden = isOpen
+  menuToggle.setAttribute('aria-expanded', String(!isOpen))
+})
+
+document.addEventListener('click', event => {
+  if (!menuToggle.contains(event.target) && !menuPopup.contains(event.target)) {
+    menuPopup.hidden = true
+    menuToggle.setAttribute('aria-expanded', 'false')
+  }
+})
+
 
 // --- 下スワイプ更新 ---
 const PULL_THRESHOLD = 80
