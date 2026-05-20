@@ -8,9 +8,12 @@ const tagChipList = document.querySelector('#tag-chip-list')
 const tagAddButton = document.querySelector('#tag-add-button')
 const tagSuggestions = document.querySelector('#tag-suggestions')
 const tagFilter = document.querySelector('#tag-filter')
+const searchInput = document.querySelector('#search-input')
+const searchClear = document.querySelector('#search-clear')
 const list = document.querySelector('#word-list')
 const emptyState = document.querySelector('#empty-state')
 const startTestButton = document.querySelector('#start-test')
+const testProgressFill = document.querySelector('#test-progress-fill')
 const testDialog = document.querySelector('#test-dialog')
 const testProgress = document.querySelector('#test-progress')
 const testWord = document.querySelector('#test-word')
@@ -190,8 +193,17 @@ function getAllTags() {
 
 function getVisibleItems() {
   const selectedTag = tagFilter.value
-  if (selectedTag === 'all') return items
-  return items.filter(item => item.tags?.includes(selectedTag))
+  const query = searchInput.value.trim().toLocaleLowerCase()
+
+  return items.filter(item => {
+    if (selectedTag !== 'all' && !item.tags?.includes(selectedTag)) return false
+    if (query) {
+      const inWord = item.word.toLocaleLowerCase().includes(query)
+      const inNote = (item.note ?? '').toLocaleLowerCase().includes(query)
+      if (!inWord && !inNote) return false
+    }
+    return true
+  })
 }
 
 function refreshTagSuggestions() {
@@ -241,9 +253,15 @@ function render() {
     const tags = document.createElement('span')
     tags.className = 'tags'
     ;(item.tags ?? []).forEach(tagValue => {
-      const tag = document.createElement('span')
-      tag.className = 'tag'
+      const tag = document.createElement('button')
+      tag.className = 'tag tag-filter-btn'
+      tag.type = 'button'
       tag.textContent = tagValue
+      tag.setAttribute('aria-label', `${tagValue} で絞り込む`)
+      tag.addEventListener('click', () => {
+        tagFilter.value = tagValue
+        render()
+      })
       tags.append(tag)
     })
 
@@ -350,7 +368,10 @@ function renderTestCard() {
   const isLast = currentTestIndex === currentTestItems.length - 1
   nextWord.textContent = isLast ? 'もう一度' : '次へ'
   const item = currentTestItems[currentTestIndex]
+  const pct = Math.round(((currentTestIndex + 1) / currentTestItems.length) * 100)
   testProgress.textContent = `${currentTestIndex + 1} / ${currentTestItems.length}`
+  testProgressFill.style.width = pct + '%'
+  testProgressFill.parentElement.setAttribute('aria-valuenow', pct)
   testWord.textContent = item.word
   testNote.textContent = item.note || '意味未入力'
   testNote.hidden = true
@@ -400,6 +421,19 @@ function resetForm() {
 cancelEditButton.addEventListener('click', resetForm)
 
 tagFilter.addEventListener('change', render)
+
+searchInput.addEventListener('input', () => {
+  searchClear.hidden = !searchInput.value
+  render()
+})
+
+searchClear.addEventListener('click', () => {
+  searchInput.value = ''
+  searchClear.hidden = true
+  render()
+  searchInput.focus()
+})
+
 startTestButton.addEventListener('click', openTest)
 tagAddButton.addEventListener('click', () => {
   addPendingTag()
