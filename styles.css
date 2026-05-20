@@ -248,6 +248,39 @@ h1 {
   margin-bottom: 18px;
 }
 
+.toolbar-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+}
+
+.search-field {
+  min-width: 200px;
+}
+
+.search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input-wrap input {
+  padding-right: 32px;
+}
+
+.search-clear {
+  position: absolute;
+  right: 6px;
+  border: 0;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  font-size: 14px;
+}
+
 .filter-field {
   display: grid;
   gap: 6px;
@@ -323,6 +356,16 @@ h1 {
   background: #eef1f5;
   color: #475569;
   font-size: 13px;
+}
+
+.tag-filter-btn {
+  border: 0;
+  cursor: pointer;
+}
+
+.tag-filter-btn:hover {
+  background: #dde3ee;
+  color: #334155;
 }
 
 .checks {
@@ -410,6 +453,22 @@ h1 {
   cursor: pointer;
 }
 
+.test-progress-bar {
+  height: 4px;
+  background: #eef1f5;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.test-progress-fill {
+  height: 100%;
+  background: #10B981;
+  border-radius: 999px;
+  transition: width 250ms ease;
+  width: 0%;
+}
+
 .test-card {
   display: grid;
   gap: 14px;
@@ -464,6 +523,14 @@ h1 {
   .toolbar {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .toolbar-filters {
+    flex-direction: column;
+  }
+
+  .search-field {
+    min-width: 0;
   }
 
   .toolbar button {
