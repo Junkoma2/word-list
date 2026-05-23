@@ -555,3 +555,43 @@ h1 {
   background: #172033;
   color: #fff;
 }
+
+/* #49: タグクリック絞り込み */
+.clickable-tag {
+  cursor: pointer;
+}
+
+.clickable-tag:hover {
+  background: #d1e7fa;
+  color: #1d4ed8;
+}
+
+.clickable-tag:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+/* #50: 検索フィールド */
+.search-field {
+  display: grid;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+#search-input {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #d6dae1;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #334155;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
