@@ -22,6 +22,7 @@ const exportButton = document.querySelector('#export-data')
 const importButton = document.querySelector('#import-data')
 const importFile = document.querySelector('#import-file')
 const statusMessage = document.querySelector('#status-message')
+const searchInput = document.querySelector('#search-input')
 
 let items = loadItems()
 let currentTestItems = []
@@ -190,8 +191,13 @@ function getAllTags() {
 
 function getVisibleItems() {
   const selectedTag = tagFilter.value
-  if (selectedTag === 'all') return items
-  return items.filter(item => item.tags?.includes(selectedTag))
+  const query = searchInput ? searchInput.value.trim().toLowerCase() : ''
+
+  return items.filter(item => {
+    if (selectedTag !== 'all' && !item.tags?.includes(selectedTag)) return false
+    if (query && !item.word.toLowerCase().includes(query) && !(item.note ?? '').toLowerCase().includes(query)) return false
+    return true
+  })
 }
 
 function refreshTagSuggestions() {
@@ -242,8 +248,19 @@ function render() {
     tags.className = 'tags'
     ;(item.tags ?? []).forEach(tagValue => {
       const tag = document.createElement('span')
-      tag.className = 'tag'
+      tag.className = 'tag clickable-tag'
       tag.textContent = tagValue
+      tag.setAttribute('role', 'button')
+      tag.setAttribute('tabindex', '0')
+      tag.setAttribute('aria-label', tagValue + 'で絞り込む')
+      tag.addEventListener('click', (e) => {
+        e.stopPropagation()
+        tagFilter.value = tagValue
+        render()
+      })
+      tag.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tagFilter.value = tagValue; render() }
+      })
       tags.append(tag)
     })
 
@@ -400,6 +417,7 @@ function resetForm() {
 cancelEditButton.addEventListener('click', resetForm)
 
 tagFilter.addEventListener('change', render)
+if (searchInput) searchInput.addEventListener('input', render)
 startTestButton.addEventListener('click', openTest)
 tagAddButton.addEventListener('click', () => {
   addPendingTag()
