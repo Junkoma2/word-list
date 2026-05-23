@@ -595,3 +595,20 @@ h1 {
   outline: none;
   border-color: #3b82f6;
 }
+
+/* #51: テストモード進捗バー */
+.test-progress-bar {
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.test-progress-fill {
+  height: 100%;
+  background: #10b981;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 0.2s ease;
+}
