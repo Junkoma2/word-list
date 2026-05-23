@@ -216,7 +216,7 @@ h1 {
 .tag-add-button {
   flex: 0 0 auto;
   min-width: 48px;
-  min-height: 34px;
+  min-height: 44px;
   border-radius: 7px;
   background: #eef2f7;
   color: #172033;
