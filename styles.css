@@ -202,6 +202,14 @@ h1 {
   background: rgba(51, 65, 85, 0.08);
   color: #475569;
   padding: 0;
+  position: relative;
+}
+
+/* タッチターゲット拡大: 見た目28pxのままタップ領域を44px以上に (#45) */
+.tag-remove-button::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
 }
 
 .tag-add-button {
