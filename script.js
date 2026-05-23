@@ -13,6 +13,8 @@ const emptyState = document.querySelector('#empty-state')
 const startTestButton = document.querySelector('#start-test')
 const testDialog = document.querySelector('#test-dialog')
 const testProgress = document.querySelector('#test-progress')
+const testProgressBar = document.querySelector('.test-progress-bar')
+const testProgressFill = document.querySelector('#test-progress-fill')
 const testWord = document.querySelector('#test-word')
 const testNote = document.querySelector('#test-note')
 const revealNote = document.querySelector('#reveal-note')
@@ -368,6 +370,13 @@ function renderTestCard() {
   nextWord.textContent = isLast ? 'もう一度' : '次へ'
   const item = currentTestItems[currentTestIndex]
   testProgress.textContent = `${currentTestIndex + 1} / ${currentTestItems.length}`
+  const pct = currentTestItems.length > 0
+    ? Math.round(((currentTestIndex + 1) / currentTestItems.length) * 100)
+    : 0
+  if (testProgressFill) {
+    testProgressFill.style.width = pct + '%'
+    testProgressBar?.setAttribute('aria-valuenow', String(pct))
+  }
   testWord.textContent = item.word
   testNote.textContent = item.note || '意味未入力'
   testNote.hidden = true
