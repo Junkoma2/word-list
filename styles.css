@@ -254,6 +254,19 @@ h1 {
   cursor: default;
 }
 
+.test-control {
+  display: grid;
+  align-self: end;
+  gap: 6px;
+}
+
+.test-hint {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.4;
+  max-width: 180px;
+}
+
 .toolbar {
   display: flex;
   justify-content: space-between;
@@ -482,6 +495,14 @@ h1 {
 
   .toolbar button {
     min-height: 44px;
+  }
+
+  .test-control {
+    align-self: stretch;
+  }
+
+  .test-hint {
+    max-width: none;
   }
 
   .table-head {
