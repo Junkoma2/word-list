@@ -41,12 +41,12 @@
             <div class="tag-chip-list" id="tag-chip-list"></div>
             <input id="tag-input" type="text" maxlength="40" placeholder="タグ名を入力" autocomplete="off" list="tag-suggestions" />
             <datalist id="tag-suggestions"></datalist>
-            <button class="tag-add-button" id="tag-add-button" type="button" aria-label="タグを確定">確定</button>
+            <button class="tag-add-button" id="tag-add-button" type="button">タグを追加</button>
           </div>
         </div>
 
         <div class="form-submit-row">
-          <button type="submit" id="submit-button">追加</button>
+          <button type="submit" id="submit-button">単語を追加</button>
           <button type="button" id="cancel-edit-button" hidden>キャンセル</button>
         </div>
       </form>
@@ -62,7 +62,10 @@
           <span class="sr-only">単語・メモを検索</span>
           <input id="search-input" type="search" placeholder="検索..." autocomplete="off" />
         </label>
-        <button id="start-test" type="button">テスト</button>
+        <div class="test-control">
+          <button id="start-test" type="button">テストを始める</button>
+          <span class="test-hint" id="test-hint">単語を追加するとテストできます</span>
+        </div>
       </section>
 
       <section class="word-section" aria-label="単語一覧">

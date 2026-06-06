@@ -11,6 +11,7 @@ const tagFilter = document.querySelector('#tag-filter')
 const list = document.querySelector('#word-list')
 const emptyState = document.querySelector('#empty-state')
 const startTestButton = document.querySelector('#start-test')
+const testHint = document.querySelector('#test-hint')
 const testDialog = document.querySelector('#test-dialog')
 const testProgress = document.querySelector('#test-progress')
 const testProgressBar = document.querySelector('.test-progress-bar')
@@ -284,7 +285,7 @@ function render() {
       pendingTags = [...(item.tags ?? [])]
       renderTagComposer()
       editingId = item.id
-      submitButton.textContent = '更新'
+      submitButton.textContent = '変更を保存'
       cancelEditButton.hidden = false
       render()
       wordInput.focus()
@@ -305,8 +306,14 @@ function render() {
     list.append(row)
   })
 
-  emptyState.hidden = visibleItems.length > 0
-  startTestButton.disabled = visibleItems.length === 0
+  const hasVisibleItems = visibleItems.length > 0
+  emptyState.hidden = hasVisibleItems
+  startTestButton.disabled = !hasVisibleItems
+  testHint.hidden = hasVisibleItems
+  testHint.textContent = items.length === 0
+    ? '単語を追加するとテストできます'
+    : '絞り込みに一致する単語がありません'
+  startTestButton.title = hasVisibleItems ? '' : testHint.textContent
 }
 
 function addOrMarkWord(word, note, tags) {
@@ -403,7 +410,7 @@ form.addEventListener('submit', event => {
   noteInput.value = ''
   tagInput.value = ''
   pendingTags = []
-  submitButton.textContent = '追加'
+  submitButton.textContent = '単語を追加'
   cancelEditButton.hidden = true
   renderTagComposer()
   saveItems()
@@ -417,7 +424,7 @@ function resetForm() {
   noteInput.value = ''
   tagInput.value = ''
   pendingTags = []
-  submitButton.textContent = '追加'
+  submitButton.textContent = '単語を追加'
   cancelEditButton.hidden = true
   renderTagComposer()
   wordInput.focus()
