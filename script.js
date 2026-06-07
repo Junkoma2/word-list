@@ -25,6 +25,10 @@ const exportButton = document.querySelector('#export-data')
 const importButton = document.querySelector('#import-data')
 const importFile = document.querySelector('#import-file')
 const statusMessage = document.querySelector('#status-message')
+const confirmDialogEl = document.querySelector('#confirm-dialog')
+const confirmDialogMessage = document.querySelector('#confirm-dialog-message')
+const confirmDialogOk = document.querySelector('#confirm-dialog-ok')
+const confirmDialogCancel = document.querySelector('#confirm-dialog-cancel')
 const searchInput = document.querySelector('#search-input')
 
 let items = loadItems()
@@ -33,6 +37,24 @@ let currentTestIndex = 0
 let editingId = null
 let pendingTags = []
 
+
+function showConfirm(message, onConfirm) {
+  confirmDialogMessage.textContent = message
+  confirmDialogEl.showModal()
+  const handleOk = () => {
+    confirmDialogEl.close()
+    confirmDialogOk.removeEventListener('click', handleOk)
+    confirmDialogCancel.removeEventListener('click', handleCancel)
+    onConfirm()
+  }
+  const handleCancel = () => {
+    confirmDialogEl.close()
+    confirmDialogOk.removeEventListener('click', handleOk)
+    confirmDialogCancel.removeEventListener('click', handleCancel)
+  }
+  confirmDialogOk.addEventListener('click', handleOk)
+  confirmDialogCancel.addEventListener('click', handleCancel)
+}
 function loadItems() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? []
@@ -98,7 +120,7 @@ function importItems(file) {
       if (!Array.isArray(payload.items) || !payload.items.every(isValidItem)) {
         throw new Error('invalid')
       }
-      if (!window.confirm('現在の単語を置き換えてインポートしますか？')) return
+      showConfirm('現在の単語を置き換えてインポートしますか？', () => {
       items = payload.items.map(item => ({
         ...item,
         note: item.note ?? '',
@@ -110,6 +132,7 @@ function importItems(file) {
       renderTagComposer()
       render()
       showStatus('インポートしました')
+      })
     } catch {
       showStatus('JSON を読み込めませんでした')
     } finally {
@@ -296,10 +319,11 @@ function render() {
     remove.type = 'button'
     remove.textContent = '削除'
     remove.addEventListener('click', () => {
-      if (!window.confirm(`「${item.word}」を削除しますか？`)) return
-      items = items.filter(entry => entry.id !== item.id)
-      saveItems()
-      render()
+      showConfirm(`「${item.word}」を削除しますか？`, () => {
+        items = items.filter(entry => entry.id !== item.id)
+        saveItems()
+        render()
+      })
     })
     actions.append(edit, remove)
     row.append(word, note, tags, checks, actions)
@@ -457,16 +481,22 @@ revealNote.addEventListener('click', () => {
 })
 
 nextWord.addEventListener('click', () => {
+  if (nextWord.disabled) return
   const isLast = currentTestIndex === currentTestItems.length - 1
   if (isLast) {
     showStatus('テスト完了')
+    nextWord.disabled = true
     setTimeout(() => {
+      nextWord.disabled = false
       currentTestIndex = 0
       renderTestCard()
     }, 800)
     return
   }
   currentTestIndex++
+  if (currentTestIndex >= currentTestItems.length) {
+    currentTestIndex = currentTestItems.length - 1
+  }
   renderTestCard()
 })
 

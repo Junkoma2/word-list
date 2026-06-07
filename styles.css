@@ -646,3 +646,49 @@ h1 {
   width: 0%;
   transition: width 0.2s ease;
 }
+
+/* 確認ダイアログ */
+.confirm-dialog {
+  border: none;
+  border-radius: 12px;
+  padding: 0;
+  max-width: 320px;
+  width: calc(100% - 32px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.confirm-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.confirm-dialog-inner {
+  padding: 24px;
+}
+
+.confirm-dialog-message {
+  margin: 0 0 20px;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #1e293b;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.confirm-dialog-actions button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.confirm-dialog-actions button:first-child {
+  background: #10b981;
+  color: #fff;
+}
