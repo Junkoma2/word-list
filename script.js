@@ -41,19 +41,14 @@ let pendingTags = []
 function showConfirm(message, onConfirm) {
   confirmDialogMessage.textContent = message
   confirmDialogEl.showModal()
-  const handleOk = () => {
+  // { once: true } でリスナーを自動解除し、複数回呼ばれても累積しない
+  confirmDialogOk.addEventListener('click', () => {
     confirmDialogEl.close()
-    confirmDialogOk.removeEventListener('click', handleOk)
-    confirmDialogCancel.removeEventListener('click', handleCancel)
     onConfirm()
-  }
-  const handleCancel = () => {
+  }, { once: true })
+  confirmDialogCancel.addEventListener('click', () => {
     confirmDialogEl.close()
-    confirmDialogOk.removeEventListener('click', handleOk)
-    confirmDialogCancel.removeEventListener('click', handleCancel)
-  }
-  confirmDialogOk.addEventListener('click', handleOk)
-  confirmDialogCancel.addEventListener('click', handleCancel)
+  }, { once: true })
 }
 function loadItems() {
   try {
