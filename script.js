@@ -19,6 +19,9 @@ const testProgressFill = document.querySelector('#test-progress-fill')
 const testWord = document.querySelector('#test-word')
 const testNote = document.querySelector('#test-note')
 const revealNote = document.querySelector('#reveal-note')
+const knownWord = document.querySelector('#known-word')
+const unknownWord = document.querySelector('#unknown-word')
+const testResultActions = document.querySelector('#test-result-actions')
 const nextWord = document.querySelector('#next-word')
 const checkUpdateButton = document.querySelector('#check-update')
 const exportButton = document.querySelector('#export-data')
@@ -385,7 +388,12 @@ function updateWord(id, word, note, tags) {
 }
 
 function openTest() {
-  currentTestItems = [...getVisibleItems()]
+  currentTestItems = [...getVisibleItems()].sort((a, b) => {
+    const missA = a.missCount || 0
+    const missB = b.missCount || 0
+    if (missB !== missA) return missB - missA
+    return (b.checks || 0) - (a.checks || 0)
+  })
   currentTestIndex = 0
   if (currentTestItems.length === 0) return
   renderTestCard()
@@ -408,6 +416,7 @@ function renderTestCard() {
   testWord.textContent = item.word
   testNote.textContent = item.note || '意味未入力'
   testNote.hidden = true
+  if (testResultActions) testResultActions.hidden = true
 }
 
 const submitButton = document.querySelector('#submit-button')
@@ -489,6 +498,7 @@ tagInput.addEventListener('keydown', event => {
 
 revealNote.addEventListener('click', () => {
   testNote.hidden = false
+  if (testResultActions) testResultActions.hidden = false
 })
 
 nextWord.addEventListener('click', () => {
@@ -509,6 +519,23 @@ nextWord.addEventListener('click', () => {
     currentTestIndex = currentTestItems.length - 1
   }
   renderTestCard()
+})
+
+knownWord?.addEventListener('click', () => {
+  if (testResultActions) testResultActions.hidden = true
+  nextWord.click()
+})
+
+unknownWord?.addEventListener('click', () => {
+  const item = currentTestItems[currentTestIndex]
+  if (item) {
+    item.missCount = (item.missCount || 0) + 1
+    const stored = items.find(i => i.id === item.id)
+    if (stored) stored.missCount = item.missCount
+    saveItems()
+  }
+  if (testResultActions) testResultActions.hidden = true
+  nextWord.click()
 })
 
 // テストモード: Space/Enter でフラッシュカードを操作
