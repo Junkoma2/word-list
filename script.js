@@ -403,6 +403,7 @@ function renderTestCard() {
   if (testProgressFill) {
     testProgressFill.style.width = pct + '%'
     testProgressBar?.setAttribute('aria-valuenow', String(pct))
+    testProgressBar?.setAttribute('aria-label', `テスト進捗 ${pct}%`)
   }
   testWord.textContent = item.word
   testNote.textContent = item.note || '意味未入力'
@@ -508,6 +509,27 @@ nextWord.addEventListener('click', () => {
     currentTestIndex = currentTestItems.length - 1
   }
   renderTestCard()
+})
+
+// テストモード: Space/Enter でフラッシュカードを操作
+testDialog.addEventListener('keydown', event => {
+  if (event.key !== ' ' && event.key !== 'Enter') return
+  // ボタン自体がフォーカスされている場合はデフォルト動作を妨げない
+  const tag = document.activeElement?.tagName
+  if (tag === 'BUTTON') return
+  event.preventDefault()
+  if (!testNote.hidden) {
+    // 意味が表示済み → 次へ
+    nextWord.click()
+  } else {
+    // 意味が非表示 → 意味を見る
+    revealNote.click()
+  }
+})
+
+// テストダイアログを閉じたら start-test にフォーカスを戻す
+testDialog.addEventListener('close', () => {
+  document.querySelector('#start-test')?.focus()
 })
 
 exportButton.addEventListener('click', exportItems)
