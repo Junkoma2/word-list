@@ -28,6 +28,9 @@ const exportButton = document.querySelector('#export-data')
 const importButton = document.querySelector('#import-data')
 const importFile = document.querySelector('#import-file')
 const statusMessage = document.querySelector('#status-message')
+const undoToast = document.querySelector('#undo-toast')
+const undoToastMsg = document.querySelector('#undo-toast-msg')
+const undoToastBtn = document.querySelector('#undo-toast-btn')
 const wordErrorEl = document.querySelector('#word-error')
 const confirmDialogEl = document.querySelector('#confirm-dialog')
 const confirmDialogMessage = document.querySelector('#confirm-dialog-message')
@@ -76,6 +79,24 @@ function showStatus(message) {
   showStatus.timer = window.setTimeout(() => {
     statusMessage.textContent = ''
   }, 2600)
+}
+
+function showUndoToast(word, restoreFn) {
+  window.clearTimeout(showUndoToast.timer)
+  undoToastMsg.textContent = `「${word}」を削除しました`
+  undoToast.hidden = false
+
+  const dismiss = () => {
+    undoToast.hidden = true
+    undoToastBtn.removeEventListener('click', onUndo)
+  }
+  const onUndo = () => {
+    window.clearTimeout(showUndoToast.timer)
+    restoreFn()
+    dismiss()
+  }
+  undoToastBtn.addEventListener('click', onUndo, { once: true })
+  showUndoToast.timer = window.setTimeout(dismiss, 5000)
 }
 
 function exportItems() {
@@ -318,8 +339,13 @@ function render() {
     remove.type = 'button'
     remove.textContent = '削除'
     remove.addEventListener('click', () => {
-      showConfirm(`「${item.word}」を削除しますか？`, () => {
-        items = items.filter(entry => entry.id !== item.id)
+      const deletedIndex = items.findIndex(entry => entry.id === item.id)
+      const deletedItem = items[deletedIndex]
+      items = items.filter(entry => entry.id !== item.id)
+      saveItems()
+      render()
+      showUndoToast(deletedItem.word, () => {
+        items.splice(deletedIndex, 0, deletedItem)
         saveItems()
         render()
       })
