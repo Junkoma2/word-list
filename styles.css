@@ -698,3 +698,30 @@ h1 {
   color: #e53e3e;
   margin-top: 4px;
 }
+
+/* テスト結果ボタン */
+.test-result-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.test-known,
+.test-unknown {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.test-known {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.test-unknown {
+  background: #fee2e2;
+  color: #991b1b;
+}
