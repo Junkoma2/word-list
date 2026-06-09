@@ -692,3 +692,9 @@ h1 {
   background: #10b981;
   color: #fff;
 }
+
+.field-error {
+  font-size: 0.78rem;
+  color: #e53e3e;
+  margin-top: 4px;
+}

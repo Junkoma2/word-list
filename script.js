@@ -25,6 +25,7 @@ const exportButton = document.querySelector('#export-data')
 const importButton = document.querySelector('#import-data')
 const importFile = document.querySelector('#import-file')
 const statusMessage = document.querySelector('#status-message')
+const wordErrorEl = document.querySelector('#word-error')
 const confirmDialogEl = document.querySelector('#confirm-dialog')
 const confirmDialogMessage = document.querySelector('#confirm-dialog-message')
 const confirmDialogOk = document.querySelector('#confirm-dialog-ok')
@@ -411,13 +412,27 @@ function renderTestCard() {
 const submitButton = document.querySelector('#submit-button')
 const cancelEditButton = document.querySelector('#cancel-edit-button')
 
+wordInput.addEventListener('input', () => {
+  if (wordInput.value.trim()) {
+    wordInput.setAttribute('aria-invalid', 'false')
+    if (wordErrorEl) wordErrorEl.hidden = true
+  }
+})
+
 form.addEventListener('submit', event => {
   event.preventDefault()
   const word = wordInput.value.trim()
   const note = noteInput.value.trim()
   addPendingTag()
   const tags = [...pendingTags]
-  if (!word) return
+  if (!word) {
+    wordInput.setAttribute('aria-invalid', 'true')
+    if (wordErrorEl) wordErrorEl.hidden = false
+    wordInput.focus()
+    return
+  }
+  wordInput.setAttribute('aria-invalid', 'false')
+  if (wordErrorEl) wordErrorEl.hidden = true
 
   if (editingId) {
     updateWord(editingId, word, note, tags)
