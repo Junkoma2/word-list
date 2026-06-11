@@ -83,18 +83,24 @@ function showStatus(message) {
 
 function showUndoToast(word, restoreFn) {
   window.clearTimeout(showUndoToast.timer)
+  // 連続削除時に前回のリスナーが残ると複数件復元されるため、先に解除する
+  if (showUndoToast.onUndo) {
+    undoToastBtn.removeEventListener('click', showUndoToast.onUndo)
+  }
   undoToastMsg.textContent = `「${word}」を削除しました`
   undoToast.hidden = false
 
   const dismiss = () => {
     undoToast.hidden = true
     undoToastBtn.removeEventListener('click', onUndo)
+    showUndoToast.onUndo = null
   }
   const onUndo = () => {
     window.clearTimeout(showUndoToast.timer)
     restoreFn()
     dismiss()
   }
+  showUndoToast.onUndo = onUndo
   undoToastBtn.addEventListener('click', onUndo, { once: true })
   showUndoToast.timer = window.setTimeout(dismiss, 5000)
 }
@@ -404,6 +410,7 @@ function updateWord(id, word, note, tags) {
     duplicate.tags = [...new Set([...(duplicate.tags ?? []), ...tags])]
     duplicate.updatedAt = new Date().toISOString()
     items = items.filter(entry => entry.id !== id)
+    showStatus(`「${duplicate.word}」に統合しました`)
     return
   }
 
