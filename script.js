@@ -57,12 +57,41 @@ function showConfirm(message, onConfirm) {
     confirmDialogEl.close()
   }, { once: true })
 }
+function normalizeLoadedItem(item) {
+  return {
+    ...item,
+    note: item.note ?? '',
+    tags: item.tags ?? [],
+    checks: item.checks ?? 1,
+  }
+}
+
 function loadItems() {
+  let raw
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? []
+    raw = JSON.parse(localStorage.getItem(STORAGE_KEY))
   } catch {
+    notifyStorageRecovered()
     return []
   }
+
+  if (raw == null) return []
+
+  if (!Array.isArray(raw)) {
+    notifyStorageRecovered()
+    return []
+  }
+
+  const valid = raw.filter(isValidItem)
+  if (valid.length !== raw.length) {
+    notifyStorageRecovered()
+  }
+  return valid.map(normalizeLoadedItem)
+}
+
+// loadItems はページ読み込み時に一度だけ呼ばれるため、DOM構築後に通知する
+function notifyStorageRecovered() {
+  window.setTimeout(() => showStatus('保存データの一部を読み込めなかったため復旧しました'), 0)
 }
 
 function saveItems() {
