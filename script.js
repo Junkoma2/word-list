@@ -362,12 +362,17 @@ function render() {
   })
 
   const hasVisibleItems = visibleItems.length > 0
+  const hasStoredItems = items.length > 0
+  const filteredEmptyMessage = '一致する単語がありません。検索やタグの絞り込みを解除してください。'
   emptyState.hidden = hasVisibleItems
+  emptyState.textContent = hasStoredItems
+    ? filteredEmptyMessage
+    : '分からなかった単語を追加してください。'
   startTestButton.disabled = !hasVisibleItems
   testHint.hidden = hasVisibleItems
-  testHint.textContent = items.length === 0
-    ? '単語を追加するとテストできます'
-    : '絞り込みに一致する単語がありません'
+  testHint.textContent = hasStoredItems
+    ? filteredEmptyMessage
+    : '単語を追加するとテストできます'
   startTestButton.title = hasVisibleItems ? '' : testHint.textContent
 }
 
