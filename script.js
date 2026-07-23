@@ -48,13 +48,19 @@ let pendingTags = []
 function showConfirm(message, onConfirm) {
   confirmDialogMessage.textContent = message
   confirmDialogEl.showModal()
-  // { once: true } でリスナーを自動解除し、複数回呼ばれても累積しない
+  // Esc・backdrop close・キャンセル・OKいずれでも dialog の close イベントが必ず発火するため、
+  // それを起点に AbortController でボタンの listener をまとめて解除する。
+  // click の once だけに頼ると、click以外で閉じた場合に古い callback が残ってしまう。
+  const controller = new AbortController()
   confirmDialogOk.addEventListener('click', () => {
     confirmDialogEl.close()
     onConfirm()
-  }, { once: true })
+  }, { signal: controller.signal })
   confirmDialogCancel.addEventListener('click', () => {
     confirmDialogEl.close()
+  }, { signal: controller.signal })
+  confirmDialogEl.addEventListener('close', () => {
+    controller.abort()
   }, { once: true })
 }
 function normalizeLoadedItem(item) {
